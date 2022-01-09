@@ -3,31 +3,46 @@
  * 以下のコンソールにはどのような値が表示されるでしょうか？
  */
 // console.log("0 == false", 0 == false);
+// true
 // console.log("0 === false", 0 === false);
+// false
 // console.log('"false" == false', "false" == false);
+// false
 // console.log('"0" == 0', "0" == 0);
+// true
 // console.log('Boolean("0") === false', Boolean("0") === false);
+// false
 // console.log('Boolean(0) === false', Boolean(0) === false);
+// true
 // console.log('!Boolean(0) === false', !Boolean(0) === false);
+// false
 // console.log('-1 == false', -1 == false);
+// false
 // console.log('!10 === false', !10 === false);
+// true
 
 /**
  * 問題２：
  * 関数fnの引数numが渡ってこない場合（undefinedまたはnullの場合）のみ、
  * 初期値として-1を設定したいものとします。
- * 
+ *
  * 以下の関数fnの初期化を適切に書き直してください。
  * ※aには0以上の整数値が渡ってくるものとします。
  */
 let a = 1;
 
+// function fn(num = -1) {
 function fn(num) {
-    num = num || -1;
-    console.log(num);
+  // num = num || -1;
+  if (num === undefined || num === null) {
+    num = -1;
+  }
+  console.log(num);
 }
 fn(a);
-
+fn(0);
+fn(null);
+fn();
 
 /**
  * 問題３：
@@ -39,3 +54,11 @@ fn(a);
  * greeting("Bob"); -> 出力結果："hello, Bob"
  *
  */
+
+function greeting(name, comment = "hello") {
+  comment = comment || "hello";
+  console.log(`${comment}, ${name}`);
+}
+
+greeting("Bob", "hi");
+greeting("Bob");
