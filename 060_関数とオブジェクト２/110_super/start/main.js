@@ -11,13 +11,14 @@ class Person {
 
 class Japanese extends Person {
     constructor(name, age, gender) {
-        super(name, age);
+        // this.gender = gender; // error まず、superを呼び出す
+        super(name, age); // 親のコンストラクタを呼び出す 必須
         this.gender = gender;
     }
 
     hello() {
-        super.hello();
         console.log('Konnichiwa ' + this.name);
+        super.hello(); // 親のメソッドを呼び出す
     }
 
     bye() {
@@ -27,17 +28,20 @@ class Japanese extends Person {
 
 const taro = new Japanese('Taro', 23, 'Male');
 console.log(taro);
-taro.bye();
+taro.hello();
 
-// const american = {
-//     hello() {
-//         console.log('hello ' + this.name);
-//     }
-// }
+const american = {
+    hello() {
+        console.log('hello ' + this.name);
+    }
+}
 
-// const bob = {
-//     name: 'Bob',
-//     hello() {
-//         super.hello();
-//     }
-// }
+const bob = {
+    name: 'Bob',
+    hello() {
+        // 初期化時(オブジェクトリテラル内)のみsuperが使用可能
+        super.hello();
+    }
+}
+Object.setPrototypeOf(bob, american); // americanのプロトタイプをbobに追加
+bob.hello()
