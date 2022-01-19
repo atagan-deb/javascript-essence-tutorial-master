@@ -36,21 +36,34 @@ async function myFetch(fileName) {
   return json;
 }
 
+// async function showTimeLine(userId) {
+//   const mainUser = await myFetch(`user${userId}.json`);
+//   const { friendIds } = await myFetch(`friendsOf${mainUser.id}.json`);
+// 	console.log(`--${mainUser.name}'s timeline--`);
+//   // mapとかで書き直せるかな？
+//   for (id of friendIds) {
+//     const friend = await myFetch(`user${id}.json`);
+//     const friendLatestMessage = await myFetch(
+//       `message${friend.latestMsgId}.json`
+//     );
+// 		console.log(`${friend.name} says: ${friendLatestMessage.message}`);
+//   }
+// }
+// showTimeLine(1);
+
 async function showTimeLine(userId) {
   const mainUser = await myFetch(`user${userId}.json`);
-  console.log(mainUser);
   const { friendIds } = await myFetch(`friendsOf${mainUser.id}.json`);
-  console.log(friendIds);
-  // mapとかで書き直せるかな？
-  let friends = [];
-  for (id of friendIds) {
-    const friend = await myFetch(`user${id}.json`);
-    const friendLatestMassage = await myFetch(
-      `message${friend.latestMsgId}.json`
-    );
-    console.log(friendLatestMassage);
-    friends.push({ ...friend, ...friendLatestMassage });
-  }
-  console.log(friends);
+  const friends = await Promise.all(
+    friendIds.map((id) => myFetch(`user${id}.json`))
+  );
+  const messages = await Promise.all(
+    friends.map((friend) => myFetch(`message${friend.latestMsgId}.json`))
+  );
+  console.log(`--${mainUser.name}'s timeline--`);
+  friends.forEach((friend) => {
+    const message = messages.find((msg) => friend.id === msg.userId);
+    console.log(`${friend.name} says: ${message.message}`);
+  });
 }
 showTimeLine(1);
