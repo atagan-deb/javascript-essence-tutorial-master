@@ -1,3 +1,9 @@
 <script type="module">
-    
+  import { compile } from "./vue.esm-browser.js";
+  const render = compile(`
+      <div>
+        <h1>hello</h1>
+      </div>
+    `);
+  console.log(render);
 </script>

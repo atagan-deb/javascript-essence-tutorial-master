@@ -1,19 +1,82 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vue Like App</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
+  <body>
     <div id="app"></div>
 
     <script type="module">
-        
-    </script>
-</body>
+      import { createApp, h } from "./app.js";
 
+      createApp({
+        data: () => ({
+          a: 8,
+          b: 7,
+        }),
+        computed: {
+          sum() {
+            return this.a + this.b;
+          },
+        },
+        methods: {
+          increment(key) {
+            return this[key]++;
+          },
+          decrement(key) {
+            return this[key]--;
+          },
+        },
+        render() {
+          return h("div", { class: "container" }, [
+            h("div", { class: "num" }, [
+              h(
+                "button",
+                {
+                  class: "btn",
+                  onClick: ($event) => this.increment("a"),
+                },
+                "+"
+              ),
+              h("div", { class: "label" }, this.a),
+              h(
+                "button",
+                {
+                  class: "btn",
+                  onClick: ($event) => this.decrement("a"),
+                },
+                "-"
+              ),
+            ]),
+            h("div", { class: "label" }, "+"),
+            h("div", { class: "num" }, [
+              h(
+                "button",
+                {
+                  class: "btn",
+                  onClick: ($event) => this.increment("b"),
+                },
+                "+"
+              ),
+              h("div", { class: "label" }, this.b),
+              h(
+                "button",
+                {
+                  class: "btn",
+                  onClick: ($event) => this.decrement("b"),
+                },
+                "-"
+              ),
+            ]),
+            h("div", { class: "label" }, "="),
+            h("div", { class: "result" }, this.sum),
+          ]);
+        },
+      }).mount("#app");
+    </script>
+  </body>
 </html>
