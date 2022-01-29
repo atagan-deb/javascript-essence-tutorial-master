@@ -18,5 +18,5 @@ export const nodeOps = {
     target.addEventListener(eventType, () => {
       callback();
     });
-  }
-}
+  },
+};

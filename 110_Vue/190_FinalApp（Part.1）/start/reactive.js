@@ -1,26 +1,41 @@
+import { queueJob } from "./scheduler.js";
+
 const handler = {
   get(target, key, receiver) {
     const res = Reflect.get(target, key, receiver);
-    console.log('%c[reactive:get]', 'background: green; color: white;', target, key, res);
+    console.log(
+      "%c[reactive:get]",
+      "background: green; color: white;",
+      target,
+      key,
+      res
+    );
     track(target, key);
     return res;
   },
   set(target, key, value, receiver) {
     const res = Reflect.set(target, key, value, receiver);
-    console.log('%c[reactive:set]', 'background: red; color: white;', target, key, value);
+    console.log(
+      "%c[reactive:set]",
+      "background: red; color: white;",
+      target,
+      key,
+      value
+    );
     trigger(target, key);
     return res;
-  }
-}
+  },
+};
 function reactive(target) {
   return new Proxy(target, handler);
 }
 
 let activeEffect = null;
-function effect(fn, { computed = false } = {}) {
+function effect(fn, { computed = false, lazy = false } = {}) {
   try {
     activeEffect = fn;
     activeEffect.computed = computed;
+    activeEffect.lazy = lazy;
     if (computed) {
       activeEffect.dirty = true;
     }
@@ -48,7 +63,13 @@ function track(target, key) {
   }
 
   if (!deps.has(activeEffect)) {
-    console.log('%c[effect:register]', 'background: blue; color: white;', target, key, activeEffect);
+    console.log(
+      "%c[effect:register]",
+      "background: blue; color: white;",
+      target,
+      key,
+      activeEffect
+    );
     deps.add(activeEffect);
   }
 }
@@ -62,30 +83,38 @@ function trigger(target, key) {
   if (!deps) {
     return;
   }
-  deps.forEach(effect => {
-    if(effect.computed) {
+  deps.forEach((effect) => {
+    if (effect.computed) {
       effect.dirty = true;
     } else {
-      effect();
+      if (effect.lazy) {
+        queueJob(effect);
+      } else {
+        effect();
+      }
     }
   });
 }
 
-function computed(getter) {
+function computed(getter, ctx) {
   let computed, value;
-  const runner = effect(getter, { computed: true });
+  const runner = effect(getter.bind(ctx), { computed: true });
 
   computed = {
     get value() {
       if (runner.dirty) {
         value = runner();
         runner.dirty = false;
-        console.log('%c[computed:refresh]', 'background: purple; color: white;', value);
+        console.log(
+          "%c[computed:refresh]",
+          "background: purple; color: white;",
+          value
+        );
       }
-      
+
       return value;
-    }
-  }
+    },
+  };
   return computed;
 }
 export { effect, trigger, reactive, computed };
