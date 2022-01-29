@@ -1,25 +1,44 @@
 <!DOCTYPE html>
 <html>
-
-<body>
+  <body>
     <div id="app"></div>
 
     <script type="module">
-        import { createVNode, patch } from './renderer.js';
-        import { nodeOps } from './nodeOps.js';
+      import { createVNode, patch } from "./renderer.js";
+      import { nodeOps } from "./nodeOps.js";
 
-        const container = nodeOps.qs('#app');
-        const prevVNode = createVNode();
-        const nextVNode = createVNode('div', { class: 'green', onClick: () => {
-            console.log('hello');
-        }}, 'hello');
-        patch(prevVNode, nextVNode, container);
+      const container = nodeOps.qs("#app");
+      const prevVNode = createVNode();
+      const nextVNode1 = createVNode(
+        "div",
+        {
+          class: "green",
+          onClick: () => {
+            console.log("hello");
+          },
+        },
+        [createVNode("h1", { class: "blue" }, "hello")]
+      );
+      const nextVNode2 = createVNode(
+        "div",
+        {
+          class: "blue",
+          onClick: () => {
+            console.log("bye");
+          },
+        },
+        [createVNode("h1", { class: "green" }, "bye")]
+      );
+      patch(prevVNode, nextVNode1, container);
+      patch(nextVNode1, nextVNode2, container);
     </script>
     <style>
-        .green {
-            color: green;
-        }
+      .green {
+        color: green;
+      }
+      .blue {
+        color: blue;
+      }
     </style>
-</body>
-
+  </body>
 </html>
